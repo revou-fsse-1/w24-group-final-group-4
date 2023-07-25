@@ -2,11 +2,11 @@ import { prisma } from '@/libs/db';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { AuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
-// import { Adapter } from 'next-auth/adapters';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 
 export const authOptions: AuthOptions = {
+  // @ts-ignore comment
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
