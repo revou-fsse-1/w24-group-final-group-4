@@ -14,7 +14,7 @@ function AuthButton({ status }: AuthButtonProps) {
       <div className="flex">
         <Link
           href="/login"
-          className="py-2 px-4 text font-medium rounded-lg focus:z-10 focus:ring-2 focus:outline-none inline-flex items-center focus:ring-gray-700 bg-sky-600 hover:bg-sky-700"
+          className="py-2 px-4 text-sm sm:text-base font-medium rounded-lg focus:z-10 focus:ring-2 focus:outline-none inline-flex items-center focus:ring-gray-700 bg-sky-600 hover:bg-sky-700"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +44,7 @@ function AuthButton({ status }: AuthButtonProps) {
             setLoading(true);
             signOut({ callbackUrl: '/login' });
           }}
-          className="py-2 px-4 font-medium rounded-lg  focus:z-10 focus:ring-2 focus:outline-none inline-flex items-center focus:ring-gray-700  bg-sky-600 hover:bg-sky-700"
+          className="py-2 px-4 text-sm sm:text-base font-medium rounded-lg  focus:z-10 focus:ring-2 focus:outline-none inline-flex items-center focus:ring-gray-700  bg-sky-600 hover:bg-sky-700"
         >
           {loading ? (
             <svg
@@ -91,7 +91,7 @@ function AuthButton({ status }: AuthButtonProps) {
         <button
           disabled
           type="button"
-          className="py-2 px-4 font-medium  rounded-lg focus:z-10 focus:ring-4 outline-none bg-sky-600 hover:bg-sky-700 inline-flex items-center"
+          className="py-2 px-4 text-sm sm:text-base font-medium  rounded-lg focus:z-10 focus:ring-4 outline-none bg-sky-600 hover:bg-sky-700 inline-flex items-center"
         >
           <svg
             aria-hidden="true"

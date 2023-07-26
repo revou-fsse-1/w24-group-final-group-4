@@ -29,7 +29,9 @@ function Navbar() {
                 fill="#38BDF8"
               />
             </svg>
-            <span className="block font-bold text-[1.75rem]">Mentalk</span>
+            <span className="hidden sm:block font-bold text-[1.75rem]">
+              Mentalk
+            </span>
           </Link>
         </div>
         <Navigation />
