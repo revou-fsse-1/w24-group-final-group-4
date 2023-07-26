@@ -18,7 +18,7 @@ function Navigation() {
         <Link
           href={navItem.path}
           key={navItem.name}
-          className={`flex-col flex md:flex-row items-center gap-1 md:gap-2 py-1 px-3 rounded-md hover:text-sky-400 ${
+          className={`flex-col flex md:flex-row items-center gap-1 md:gap-2 py-1 px-3 rounded-md hover:text-sky-400 text-base md:text-lg ${
             router.pathname === navItem.path && 'md:bg-sky-600/20 text-sky-400'
           }`}
         >
@@ -28,7 +28,7 @@ function Navigation() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
+            className="w-[1em] h-[1em]"
           >
             {navItem.name === 'Home' && (
               <path
@@ -60,9 +60,7 @@ function Navigation() {
             )}
           </svg>
 
-          <span className="block font-medium text-base md:text-lg">
-            {navItem.name}
-          </span>
+          <span className="block font-medium ">{navItem.name}</span>
         </Link>
       ))}
     </div>
