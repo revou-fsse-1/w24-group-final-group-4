@@ -1,10 +1,13 @@
 import PageLayout from '@/components/PageLayout';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { Session, User, getServerSession } from 'next-auth';
+import { User, getServerSession } from 'next-auth';
 import { Archivo } from 'next/font/google';
 import Head from 'next/head';
 import { authOptions } from '../api/auth/[...nextauth]';
-import { useSession } from 'next-auth/react';
+import PostForm from '@/components/PostForm';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import axios from 'axios';
+import router from 'next/router';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -17,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return {
       redirect: {
         permanent: false,
-        destination: '/',
+        destination: '/login',
       },
     };
   }
@@ -29,7 +32,42 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 };
 
+export interface IFormInput {
+  title: string;
+  description: string;
+}
+
 export default function Posts({ user }: { user: User }) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<IFormInput>();
+
+  const onSubmit: SubmitHandler<IFormInput> = async (formData) => {
+    // setShowError(false);
+    try {
+      await axios.post(
+        '/api/posts',
+        {
+          ...formData,
+          userId: user.id,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      router.replace('/posts');
+      reset({ title: '', description: '' });
+    } catch (error: any) {
+      console.log(error);
+      // setShowError(true);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -65,61 +103,15 @@ export default function Posts({ user }: { user: User }) {
             </div>
 
             <div className="col-span-7">
-              <div className="bg-gray-700 p-8 rounded-md flex items-start gap-6">
-                <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={user.image as string}
-                    alt={`Profile picture of ${user.name}`}
-                    className="block w-full aspect-square rounded-full object-cover object-center h-full text-transparent'"
-                    onError={(e) => (e.currentTarget.src = '/avatar.svg')}
-                  />
-                </div>
-
-                <div className="space-y-4 flex-grow">
-                  <h3 className="text-lg font-medium">Create New Post</h3>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                      >
-                        <path d="M16.5 6a3 3 0 00-3-3H6a3 3 0 00-3 3v7.5a3 3 0 003 3v-6A4.5 4.5 0 0110.5 6h6z" />
-                        <path d="M18 7.5a3 3 0 013 3V18a3 3 0 01-3 3h-7.5a3 3 0 01-3-3v-7.5a3 3 0 013-3H18z" />
-                      </svg>
-                    </div>
-                    <input
-                      type="text"
-                      id="title"
-                      className="bg-gray-50 border border-slate-200 text-gray-900 text-sm rounded-lg outline-0 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Title"
-                    />
-                  </div>
-                  <div className="relative">
-                    <div className="absolute top-3 left-0 flex items-center pl-3.5 pointer-events-none">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                      >
-                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                      </svg>
-                    </div>
-                    <textarea
-                      id="description"
-                      className="bg-gray-50 resize-none border border-slate-200 text-gray-900 text-sm rounded-lg outline-0 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Tell us what you feel.."
-                      rows={6}
-                    />
-                  </div>
-                  <button className="block bg-sky-600 hover:bg-sky-700 py-2 px-4 ml-auto font-medium rounded-md ">
-                    Create Post
-                  </button>
-                </div>
-              </div>
+              <PostForm
+                user={user}
+                errors={errors}
+                handleSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
+                register={register}
+                type="create"
+                onSubmit={onSubmit}
+              />
             </div>
           </section>
         </main>
