@@ -9,6 +9,8 @@ import { authOptions } from '../api/auth/[...nextauth]';
 import { prisma } from '@/libs/db';
 import { PostStringDates } from '.';
 import DetailPostCard from '@/components/DetailPostCard';
+import { useState } from 'react';
+import Modal from '@/components/Modal';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -68,6 +70,7 @@ export default function DetailPost({
   post: PostStringDates;
 }) {
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <>
@@ -178,10 +181,17 @@ export default function DetailPost({
             </div>
 
             <div className="col-span-full md:col-span-7 space-y-6">
-              <DetailPostCard post={post} />
+              <DetailPostCard
+                post={post}
+                user={user}
+                setShowModal={setShowModal}
+              />
             </div>
           </section>
         </main>
+        {showModal && (
+          <Modal setShowModal={setShowModal} user={user} post={post} />
+        )}
       </PageLayout>
     </>
   );
