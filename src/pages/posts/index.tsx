@@ -61,7 +61,7 @@ export interface IFormInput {
   description: string;
 }
 
-type PostStringDates = Omit<Post, 'createdAt' | 'updatedAt'> & {
+export type PostStringDates = Omit<Post, 'createdAt' | 'updatedAt'> & {
   createdAt: string;
   updatedAt: string;
 } & { comments: Comment[]; user: User };
