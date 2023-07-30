@@ -15,6 +15,7 @@ import { Comment, Post } from '@prisma/client';
 import { makeInitial } from '@/libs/makeInitial';
 import { getDate } from '@/libs/getDate';
 import Link from 'next/link';
+import SearchInput from '@/components/SearchInput';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -105,6 +106,7 @@ export default function Posts({
             </div>
 
             <div className="col-span-full md:col-span-7 space-y-6">
+              <SearchInput></SearchInput>
               <div className="h-[1px] w-full bg-slate-200/10"></div>
 
               <div className="space-y-3">
