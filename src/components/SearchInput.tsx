@@ -18,8 +18,9 @@ const SearchInput = () => {
     router.push(`/search?q=${encodedSearchInput}`);
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="flex justify-center w-2/3" onSubmit={handleSubmit}>
       <input
+        className="px-5 py-1 w-2/3 sm:px-5 sm:py-3 flex-1 text-zinc-200 bg-zinc-800 focus:bg-black rounded-full focus:outline-none focus:ring-[1px] focus:ring-sky-600 placeholder:text-zinc-400"
         value={searchInput || ''}
         onChange={(e) => setSearchInput(e.target.value)}
         placeholder="What are you struggling with?"

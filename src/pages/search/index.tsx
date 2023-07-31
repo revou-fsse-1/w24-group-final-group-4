@@ -23,8 +23,25 @@ const archivo = Archivo({ subsets: ['latin'] });
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
+  const query = (context.query.q ? context.query.q : '') as string;
   const session = await getServerSession(context.req, context.res, authOptions);
   const posts = await prisma.post.findMany({
+    where: {
+      OR: [
+        {
+          title: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+        {
+          description: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+      ],
+    },
     include: {
       user: true,
       comments: {
@@ -79,25 +96,6 @@ export default function Posts({
   user: User;
   posts: PostStringDates[];
 }) {
-  const [searchInput, setSearchInput] = useState('');
-  const [searchResults, setSearchResults] = useState<PostStringDates[]>([]);
-
-  const handleSearch = async () => {
-    await fetch(`/api/search?q=${SearchInput}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setSearchResults(data);
-      })
-      .catch((error) => {
-        console.error('Error while fetching search results:', error);
-      });
-  };
-
-  useEffect(() => {
-    handleSearch();
-  }, [searchInput]);
-
-  console.log(searchResults);
   return (
     <>
       <Head>
@@ -181,68 +179,66 @@ export default function Posts({
             </div>
 
             <div className="col-span-full md:col-span-7 space-y-6">
-              <form>
-                <input
-                  placeholder="search"
-                  value={searchInput}
-                  onChange={(e) => {
-                    setSearchInput(e.target.value);
-                  }}
-                ></input>
-              </form>
+              <SearchInput></SearchInput>
               <div className="h-[1px] w-full bg-slate-200/10"></div>
 
-              <div className="space-y-3">
-                {posts.map((post) => (
-                  <Link
-                    href={`/posts/${post.id}`}
-                    key={post.id}
-                    className="block bg-gray-700 rounded-md p-6 space-y-3 hover:ring-2 ring-transparent hover:ring-sky-600 transition-all"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full flex justify-center items-center bg-gray-400 p-2 aspect-square min-h-[3rem] ">
-                          <span className="text-[90%]">
-                            {makeInitial(post.user.name as string)}
-                          </span>
+              {posts.length === 0 ? (
+                <div className="flex justify-center py-24 bg-gray-900/20 rounded-lg mt-10">
+                  <p>No posts available</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {posts.map((post) => (
+                    <Link
+                      href={`/posts/${post.id}`}
+                      key={post.id}
+                      className="block bg-gray-700 rounded-md p-6 space-y-3 hover:ring-2 ring-transparent hover:ring-sky-600 transition-all"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className="rounded-full flex justify-center items-center bg-gray-400 p-2 aspect-square min-h-[3rem] ">
+                            <span className="text-[90%]">
+                              {makeInitial(post.user.name as string)}
+                            </span>
+                          </div>
+
+                          <div>
+                            <p className="font-semibold text-xl">
+                              {makeInitial(post.user.name as string)}
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              {getDate(post.createdAt)}
+                            </p>
+                          </div>
                         </div>
 
-                        <div>
-                          <p className="font-semibold text-xl">
-                            {makeInitial(post.user.name as string)}
-                          </p>
-                          <p className="text-gray-400 text-xs">
-                            {getDate(post.createdAt)}
-                          </p>
+                        <div className="flex items-center gap-2">
+                          <p>{post.comments.length}</p>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="w-6 h-6"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <p>{post.comments.length}</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-6 h-6"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                      <div className="space-y-2">
+                        <h3 className="font-medium text-lg">{post.title}</h3>
+                        <p className="line-clamp-4 text-gray-400">
+                          {post.description}
+                        </p>
                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="font-medium text-lg">{post.title}</h3>
-                      <p className="line-clamp-4 text-gray-400">
-                        {post.description}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         </main>
