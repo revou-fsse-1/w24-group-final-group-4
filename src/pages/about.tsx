@@ -6,12 +6,10 @@ const inter = Archivo({ subsets: ['latin'] });
 export default function About() {
   return (
     <PageLayout>
-      <main
-        className={`flex min-h-screen p-24 ${inter.className}`}
-      >
+      <main className={`flex min-h-screen p-24`}>
         <div className="px-6 w-full ">
-          <div className="flex p-16 flex-col ">
-            <div className="rounded-[20px]">
+          <div className="flex flex-col items-center">
+            <div className="max-w-screen-md ">
               <p
                 className="font-semibold py-4 text-center"
                 style={{
@@ -24,7 +22,7 @@ export default function About() {
                 About Us
               </p>
               <br />
-              
+
               <p
                 className="text-gray-400 text-center"
                 style={{
@@ -34,10 +32,22 @@ export default function About() {
                   // position: 'relative',
                 }}
               >
-                We are group of people who really care about the general masses'
+                We are a group of people who really care about the general masses'
                 mental health and decided to make a platform on which they could
                 ease their pain by sharing with others.
               </p>
+              <br />
+              </div>
+
+              <div className="w-full">
+                <iframe
+                  className="rounded-xl mt-9 w-full"
+                  // width="1000"
+                  height="450"
+                  loading="lazy"
+                  allowFullScreen
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d253840.65638948375!2d106.66470170942193!3d-6.229379588483536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e34b9d%3A0x5371bf0fdad786a2!2sJakarta!5e0!3m2!1sen!2sid!4v1690526939814!5m2!1sen!2sid"
+                ></iframe>
             </div>
           </div>
         </div>
