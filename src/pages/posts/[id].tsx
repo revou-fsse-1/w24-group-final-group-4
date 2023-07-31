@@ -16,6 +16,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import axios from 'axios';
 import CommentCard from '@/components/CommentCard';
 import { Comment } from '@prisma/client';
+import Toast from '@/components/Toast';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -105,7 +106,6 @@ export default function DetailPost({
   const paramId = router.asPath.split('/')[router.asPath.split('/').length - 1];
 
   const onSubmit: SubmitHandler<{ text: string }> = async (formData) => {
-    console.log(formData);
     setShowError(false);
     try {
       await axios.post(
@@ -256,6 +256,10 @@ export default function DetailPost({
                 setShowModal={setShowModal}
                 onDelete={onDelete}
               />
+
+              {showError && (
+                <Toast>Failed to create the post. Please try again.</Toast>
+              )}
 
               {/* <div className="h-[1px] w-full bg-slate-200/10"></div> */}
 
