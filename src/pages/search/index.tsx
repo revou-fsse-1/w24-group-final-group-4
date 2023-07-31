@@ -7,8 +7,8 @@ import { authOptions } from '../api/auth/[...nextauth]';
 import PostForm from '@/components/PostForm';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import axios from 'axios';
-import router from 'next/router';
-import { useState } from 'react';
+import router, { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Toast from '@/components/Toast';
 import { prisma } from '@/libs/db';
 import { Comment, Post } from '@prisma/client';
@@ -16,6 +16,7 @@ import { makeInitial } from '@/libs/makeInitial';
 import { getDate } from '@/libs/getDate';
 import Link from 'next/link';
 import SearchInput from '@/components/SearchInput';
+import { useSearchParams } from 'next/navigation';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -26,7 +27,11 @@ export const getServerSideProps: GetServerSideProps = async (
   const posts = await prisma.post.findMany({
     include: {
       user: true,
-      comments: true,
+      comments: {
+        select: {
+          id: true,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
@@ -57,7 +62,12 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 };
 
-type PostStringDates = Omit<Post, 'createdAt' | 'updatedAt'> & {
+export interface IFormInput {
+  title: string;
+  description: string;
+}
+
+export type PostStringDates = Omit<Post, 'createdAt' | 'updatedAt'> & {
   createdAt: string;
   updatedAt: string;
 } & { comments: Comment[]; user: User };
@@ -69,6 +79,25 @@ export default function Posts({
   user: User;
   posts: PostStringDates[];
 }) {
+  const [searchInput, setSearchInput] = useState('');
+  const [searchResults, setSearchResults] = useState<PostStringDates[]>([]);
+
+  const handleSearch = async () => {
+    await fetch(`/api/search?q=${SearchInput}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+      })
+      .catch((error) => {
+        console.error('Error while fetching search results:', error);
+      });
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchInput]);
+
+  console.log(searchResults);
   return (
     <>
       <Head>
@@ -77,6 +106,52 @@ export default function Posts({
       <PageLayout>
         <main className={`${archivo.className} px-8 py-10`}>
           <section className="max-w-screen-lg mx-auto grid grid-cols-10 gap-4">
+            <nav className="col-span-full" aria-label="Breadcrumb">
+              <ol className="inline-flex items-center space-x-1 md:space-x-3">
+                <li className="inline-flex items-center">
+                  <Link
+                    href="/"
+                    className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+                  >
+                    <svg
+                      className="w-3 h-3 mr-2.5"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
+                    </svg>
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <div className="flex items-center">
+                    <svg
+                      className="w-3 h-3 text-gray-400 mx-1"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 6 10"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="m1 9 4-4-4-4"
+                      />
+                    </svg>
+                    <Link
+                      href="/posts"
+                      className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"
+                    >
+                      Posts
+                    </Link>
+                  </div>
+                </li>
+              </ol>
+            </nav>
             <div className="col-span-full md:col-span-3 sm:grid sm:grid-cols-2 md:block gap-4 md:space-y-4">
               <div className="bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-md p-6 pt-24">
                 <h1 className="font-semibold text-2xl">All Posts</h1>
@@ -106,7 +181,15 @@ export default function Posts({
             </div>
 
             <div className="col-span-full md:col-span-7 space-y-6">
-              <SearchInput></SearchInput>
+              <form>
+                <input
+                  placeholder="search"
+                  value={searchInput}
+                  onChange={(e) => {
+                    setSearchInput(e.target.value);
+                  }}
+                ></input>
+              </form>
               <div className="h-[1px] w-full bg-slate-200/10"></div>
 
               <div className="space-y-3">
