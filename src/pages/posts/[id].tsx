@@ -42,6 +42,9 @@ export const getServerSideProps: GetServerSideProps = async (
         include: {
           user: true,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       },
     },
     orderBy: {
@@ -125,6 +128,18 @@ export default function DetailPost({
       setShowError(true);
     }
   };
+
+  async function onDelete() {
+    setShowError(false);
+    try {
+      await axios.delete(`/api/posts/${paramId}`);
+      router.replace(`/posts`);
+      reset({ text: '' });
+    } catch (error: any) {
+      console.log(error);
+      setShowError(true);
+    }
+  }
 
   return (
     <>
@@ -239,6 +254,7 @@ export default function DetailPost({
                 post={post}
                 user={user}
                 setShowModal={setShowModal}
+                onDelete={onDelete}
               />
 
               {/* <div className="h-[1px] w-full bg-slate-200/10"></div> */}

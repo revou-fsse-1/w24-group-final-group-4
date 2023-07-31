@@ -27,7 +27,7 @@ function PostForm({
   user,
 }: FormPostProps & { user: User }) {
   return (
-    <div className="bg-gray-700 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6">
+    <div className="bg-gray-700/30 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6">
       <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -60,7 +60,7 @@ function PostForm({
             <input
               type="text"
               id="title"
-              className={`border text-sm rounded-lg outline-none  block w-full pl-10 p-2.5  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 `}
+              className={`border text-sm rounded-lg outline-none  block w-full pl-10 p-2.5  bg-gray-700/30 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 `}
               placeholder="Title"
               {...register('title', { required: true })}
             />
@@ -81,7 +81,7 @@ function PostForm({
             </div>
             <textarea
               id="description"
-              className=" resize-none border  text-sm rounded-lg outline-none block w-full pl-10 p-2.5  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+              className=" resize-none border  text-sm rounded-lg outline-none block w-full pl-10 p-2.5  bg-gray-700/30 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
               placeholder="Tell us what you feel.."
               rows={6}
               {...register('description', { required: true })}
