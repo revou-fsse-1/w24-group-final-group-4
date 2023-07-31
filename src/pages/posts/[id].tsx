@@ -11,6 +11,9 @@ import { PostStringDates } from '.';
 import DetailPostCard from '@/components/DetailPostCard';
 import { useState } from 'react';
 import Modal from '@/components/Modal';
+import CommentForm from '@/components/CommentForm';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import axios from 'axios';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -33,7 +36,11 @@ export const getServerSideProps: GetServerSideProps = async (
     },
     include: {
       user: true,
-      comments: true,
+      comments: {
+        include: {
+          user: true,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
@@ -54,10 +61,20 @@ export const getServerSideProps: GetServerSideProps = async (
     updatedAt: post.createdAt.toISOString(),
   };
 
+  const serializedComment = serializedPost.comments.map((comment) => {
+    return {
+      ...comment,
+      createdAt: comment.createdAt.toISOString(),
+      updatedAt: comment.createdAt.toISOString(),
+    };
+  });
+
+  console.log(serializedComment);
+
   return {
     props: {
       user: session.user,
-      post: serializedPost,
+      post: { ...serializedPost, comments: serializedComment },
     },
   };
 };
@@ -71,6 +88,40 @@ export default function DetailPost({
 }) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<{ text: string }>();
+
+  const paramId = router.asPath.split('/')[router.asPath.split('/').length - 1];
+
+  const onSubmit: SubmitHandler<{ text: string }> = async (formData) => {
+    console.log(formData);
+    setShowError(false);
+    try {
+      await axios.post(
+        '/api/comments',
+        {
+          ...formData,
+          userId: user.id,
+          postId: paramId,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      router.replace(`/posts/${paramId}`);
+      reset({ text: '' });
+    } catch (error: any) {
+      console.log(error);
+      setShowError(true);
+    }
+  };
 
   return (
     <>
@@ -85,7 +136,7 @@ export default function DetailPost({
                 <li className="inline-flex items-center">
                   <Link
                     href="/"
-                    className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+                    className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-white"
                   >
                     <svg
                       className="w-3 h-3 mr-2.5"
@@ -118,7 +169,7 @@ export default function DetailPost({
                     </svg>
                     <Link
                       href="/posts"
-                      className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"
+                      className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 text-gray-400 hover:text-white"
                     >
                       Posts
                     </Link>
@@ -141,7 +192,7 @@ export default function DetailPost({
                         d="m1 9 4-4-4-4"
                       />
                     </svg>
-                    <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
+                    <span className="ml-1 text-sm font-medium md:ml-2 text-gray-400">
                       {
                         router.asPath.split('/')[
                           router.asPath.split('/').length - 1
@@ -185,6 +236,16 @@ export default function DetailPost({
                 post={post}
                 user={user}
                 setShowModal={setShowModal}
+              />
+
+              <div className="h-[1px] w-full bg-slate-200/10"></div>
+
+              <CommentForm
+                errors={errors}
+                handleSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
+                register={register}
+                onSubmit={onSubmit}
               />
             </div>
           </section>

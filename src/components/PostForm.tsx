@@ -8,7 +8,7 @@ import {
   UseFormRegister,
 } from 'react-hook-form';
 
-type FormContactProps = {
+type FormPostProps = {
   handleSubmit: UseFormHandleSubmit<IFormInput, undefined>;
   onSubmit: SubmitHandler<IFormInput>;
   errors: FieldErrors<IFormInput>;
@@ -25,7 +25,7 @@ function PostForm({
   isSubmitting,
   type,
   user,
-}: FormContactProps & { user: User }) {
+}: FormPostProps & { user: User }) {
   return (
     <div className="bg-gray-700 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6">
       <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500">
