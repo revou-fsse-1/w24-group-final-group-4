@@ -212,7 +212,7 @@ export default function Posts({
                   <Link
                     href={`/posts/${post.id}`}
                     key={post.id}
-                    className="block bg-gray-700 rounded-md p-6 space-y-3 hover:ring-2 ring-transparent hover:ring-sky-600 hover:translate-x-2 transition-all"
+                    className="block bg-gray-700 rounded-md p-6 space-y-3 hover:ring-2 ring-transparent hover:ring-sky-600 transition-all"
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-3">

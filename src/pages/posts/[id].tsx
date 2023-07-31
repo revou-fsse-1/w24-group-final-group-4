@@ -14,6 +14,8 @@ import Modal from '@/components/Modal';
 import CommentForm from '@/components/CommentForm';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import axios from 'axios';
+import CommentCard from '@/components/CommentCard';
+import { Comment } from '@prisma/client';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -47,8 +49,6 @@ export const getServerSideProps: GetServerSideProps = async (
     },
   });
 
-  console.log(post);
-
   if (!post) {
     return {
       notFound: true,
@@ -69,8 +69,6 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   });
 
-  console.log(serializedComment);
-
   return {
     props: {
       user: session.user,
@@ -78,6 +76,11 @@ export const getServerSideProps: GetServerSideProps = async (
     },
   };
 };
+
+export type SerializedComment = Omit<Comment, 'createdAt' | 'updatedAt'> & {
+  createdAt: string;
+  updatedAt: string;
+} & { user: User };
 
 export default function DetailPost({
   user,
@@ -169,7 +172,7 @@ export default function DetailPost({
                     </svg>
                     <Link
                       href="/posts"
-                      className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 text-gray-400 hover:text-white"
+                      className="ml-1 text-sm font-medium md:ml-2 text-gray-400 hover:text-white"
                     >
                       Posts
                     </Link>
@@ -238,7 +241,7 @@ export default function DetailPost({
                 setShowModal={setShowModal}
               />
 
-              <div className="h-[1px] w-full bg-slate-200/10"></div>
+              {/* <div className="h-[1px] w-full bg-slate-200/10"></div> */}
 
               <CommentForm
                 errors={errors}
@@ -247,6 +250,15 @@ export default function DetailPost({
                 register={register}
                 onSubmit={onSubmit}
               />
+
+              <div className="space-y-3">
+                <h3 className="text-xl font-bold">
+                  Comments - {post.comments.length}
+                </h3>
+                {post.comments.map((comment) => (
+                  <CommentCard key={comment.id} comment={comment} />
+                ))}
+              </div>
             </div>
           </section>
         </main>
