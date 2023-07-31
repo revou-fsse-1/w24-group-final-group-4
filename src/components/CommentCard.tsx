@@ -12,7 +12,7 @@ export default function CommentCard({ comment }: { comment: any }) {
     >
       <div>
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
+          <div className="flex items-start gap-3">
             <div className="rounded-full flex justify-center items-center bg-gray-400 p-2 aspect-square min-h-[3rem] ">
               <span className="text-[90%]">
                 {makeInitial(comment.user.name as string)}
