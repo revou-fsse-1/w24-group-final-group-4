@@ -27,8 +27,8 @@ function PostForm({
   user,
 }: FormPostProps & { user: User }) {
   return (
-    <div className="bg-gray-700/30 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6">
-      <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500">
+    <div className="bg-gray-700/30 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6 border-2 border-gray-700/50">
+      <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500 ">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={user.image as string}
