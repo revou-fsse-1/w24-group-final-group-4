@@ -103,8 +103,8 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center py-2">
             <h1 className="italic">
-              "Not all scars are visible. Mental health is just as important as
-              physical health."
+              {`"Not all scars are visible. Mental health is just as important as
+              physical health."`}
             </h1>
             <p className="text-xs text-gray-400 italic">
               - Milena Osorio, ICRC Lead Clinical Psychologist
