@@ -27,7 +27,11 @@ function PostForm({
   user,
 }: FormPostProps & { user: User }) {
   return (
-    <div className="bg-gray-700/30 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6 border-2 border-gray-700/50">
+    <div
+      className={` border-gray-700/50 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6 border-2 ${
+        type === 'create' ? 'bg-gray-700/30' : 'bg-gray-700'
+      } `}
+    >
       <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500 ">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -39,7 +43,9 @@ function PostForm({
       </div>
 
       <div className="space-y-4 flex-grow">
-        <h3 className="text-lg font-medium">Create New Post</h3>
+        <h3 className="text-lg font-medium">
+          {type === 'create' ? 'Create New Post' : 'Edit Post'}
+        </h3>
         <form
           className="space-y-3"
           autoComplete="off"

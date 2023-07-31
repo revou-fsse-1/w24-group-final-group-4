@@ -49,6 +49,9 @@ export default function Login() {
                   Email with that account has been linked. Try another
                 </Toast>
               )}
+              {router.query.error === 'OAuthCallback' && (
+                <Toast>Something wrong when signing in</Toast>
+              )}
               <div className="p-6 space-y-4 mt-8 md:space-y-6 sm:p-8 border border-slate-200/10 rounded-lg">
                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                   Sign in to your account
