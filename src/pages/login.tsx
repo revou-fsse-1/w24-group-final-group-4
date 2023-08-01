@@ -103,7 +103,9 @@ export default function Login() {
                     Sign in with Google
                   </button>
                   <button
-                    onClick={() => signIn('github', { callbackUrl: '/' })}
+                    onClick={() =>
+                      signIn('github', { callbackUrl: '/profile' })
+                    }
                     type="button"
                     disabled
                     className="text-white disabled:cursor-not-allowed bg-gray-700 hover:bg-gray-700/90 hover:ring-2 hover:outline-none hover:ring-gray-400/30 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center w-full justify-center mr-2 mb-2"
@@ -138,7 +140,9 @@ export default function Login() {
                     Sign in with Facebook
                   </button>
                   <button
-                    onClick={() => signIn('github', { callbackUrl: '/' })}
+                    onClick={() =>
+                      signIn('github', { callbackUrl: '/profile' })
+                    }
                     type="button"
                     className="text-white bg-gray-700 hover:bg-gray-700/90 hover:ring-2 hover:outline-none hover:ring-gray-400/30 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center w-full justify-center mr-2 mb-2"
                   >

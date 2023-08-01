@@ -1,5 +1,6 @@
 import { IFormInput } from '@/pages/posts';
 import { User } from 'next-auth';
+import Link from 'next/link';
 import React from 'react';
 import {
   FieldErrors,
@@ -33,13 +34,15 @@ function PostForm({
       } `}
     >
       <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500 ">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={user.image as string}
-          alt={`Profile picture of ${user.name}`}
-          className="block w-full aspect-square rounded-full object-cover object-center h-full text-transparent'"
-          onError={(e) => (e.currentTarget.src = '/avatar.svg')}
-        />
+        <Link href={'/profile'}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={user.image as string}
+            alt={`Profile picture of ${user.name}`}
+            className="block w-full aspect-square rounded-full object-cover object-center h-full text-transparent'"
+            onError={(e) => (e.currentTarget.src = '/avatar.svg')}
+          />
+        </Link>
       </div>
 
       <div className="space-y-4 flex-grow">
