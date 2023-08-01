@@ -152,7 +152,7 @@ export default function Posts({
             </nav>
             <div className="col-span-full md:col-span-3 sm:grid sm:grid-cols-2 md:block gap-4 md:space-y-4">
               <div className="bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-md p-6 pt-24">
-                <h1 className="font-semibold text-2xl">All Posts</h1>
+                <h1 className="font-semibold text-2xl">Search</h1>
                 <p>{`Let's`} help each other</p>
               </div>
               <div className="bg-slate-200 rounded-md px-6 py-14 hidden sm:block text-gray-900 text-center space-y-1">

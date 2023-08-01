@@ -17,6 +17,7 @@ const SearchInput = () => {
     const encodedSearchInput = encodeURI(searchInput);
     router.push(`/search?q=${encodedSearchInput}`);
   };
+
   return (
     <form className="flex justify-center w-2/3" onSubmit={handleSubmit}>
       <input
