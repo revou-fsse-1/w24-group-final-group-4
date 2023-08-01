@@ -1,39 +1,41 @@
 import Image from 'next/image';
 import { Archivo } from 'next/font/google';
 import PageLayout from '@/components/PageLayout';
+import Link from 'next/link';
+import Head from 'next/head';
 
-const inter = Archivo({ subsets: ['latin'] });
+const archivo = Archivo({ subsets: ['latin'] });
 
 const images = ['https://i.imgur.com/N1gYpys.jpeg'];
 
 export default function Home() {
   return (
-    <PageLayout>
-      <main
-        className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-      >
-        <div className="px-6 w-full">
-          <div className="flex items-center justify-between p-16 bg-slate-700 rounded-[20px]">
-            <div className="">
+    <>
+      <Head>
+        <title>Home | Mentalk</title>
+      </Head>
+      <PageLayout>
+        <main
+          className={`flex min-h-screen flex-col items-center justify-between py-20 px-8 ${archivo.className}`}
+        >
+          <div className=" max-w-screen-xl mx-auto flex flex-col lg:flex-row items-center justify-between p-8 md:p-16 bg-slate-700 rounded-[20px] gap-8 w-full">
+            <div className="order-2 lg:order-1 flex flex-col gap-3">
               <p
-                className="font-semibold py-4"
+                className="font-semibold py-4 text-4xl md:text-5xl lg:text-[56px]  max-w-[17ch]"
                 style={{
-                  fontSize: '56px',
-                  lineHeight: '64px',
+                  // fontSize: '56px',
+                  // lineHeight: '64px',
                   letterSpacing: '0.45px',
-                  // position: 'relative',
                 }}
               >
-                Take care of your
-                <br />
-                mental health with
-                <br />
-                our great community
+                Take care of your mental health with our great community
               </p>
-              <button className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg">
-                Get Started
-              </button>
-              <div className="flex py-6 gap-10">
+              <Link href="/login">
+                <button className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg">
+                  Get Started
+                </button>
+              </Link>
+              <div className="flex flex-col md:flex-row py-6 gap-6">
                 <div className="flex gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -51,10 +53,9 @@ export default function Home() {
                   </svg>
                   <div className="flex flex-col gap-1">
                     <h1>Relief The Burden</h1>
-                    <p className="text-xs text-gray-400">
-                      You don’t have to deal with your
-                      <br />
-                      mental health problem alone
+                    <p className="text-sm text-gray-400 max-w-[26ch]">
+                      You don’t have to deal with your mental health problem
+                      alone
                     </p>
                   </div>
                 </div>
@@ -76,23 +77,22 @@ export default function Home() {
 
                   <div className="flex flex-col gap-1">
                     <h1>Accessible</h1>
-                    <p className="text-xs text-gray-400">
-                      Find your perfect healer based on your
-                      <br />
-                      unique needs and goals!
+                    <p className="text-sm text-gray-400 max-w-[26ch]">
+                      Find your perfect healer based on your unique needs and
+                      goals!
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="">
+            <div className="shrink-1 order-1 lg:order-2">
               {images.map((image, index) => {
                 return (
                   <div className="" key={image}>
                     <Image
                       src={image}
                       alt={`Image  ${index}`}
-                      className="rounded-[20px]"
+                      className="rounded-[20px] w-full"
                       width={500}
                       height={300}
                     />
@@ -101,7 +101,7 @@ export default function Home() {
               })}
             </div>
           </div>
-          <div className="flex flex-col items-center py-2">
+          <div className="flex flex-col items-center py-2 my-6">
             <h1 className="italic">
               {`"Not all scars are visible. Mental health is just as important as
               physical health."`}
@@ -110,8 +110,8 @@ export default function Home() {
               - Milena Osorio, ICRC Lead Clinical Psychologist
             </p>
           </div>
-        </div>
-      </main>
-    </PageLayout>
+        </main>
+      </PageLayout>
+    </>
   );
 }
