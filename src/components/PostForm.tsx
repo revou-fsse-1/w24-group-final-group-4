@@ -1,5 +1,6 @@
 import { IFormInput } from '@/pages/posts';
 import { User } from 'next-auth';
+import Link from 'next/link';
 import React from 'react';
 import {
   FieldErrors,
@@ -8,7 +9,7 @@ import {
   UseFormRegister,
 } from 'react-hook-form';
 
-type FormContactProps = {
+type FormPostProps = {
   handleSubmit: UseFormHandleSubmit<IFormInput, undefined>;
   onSubmit: SubmitHandler<IFormInput>;
   errors: FieldErrors<IFormInput>;
@@ -25,21 +26,29 @@ function PostForm({
   isSubmitting,
   type,
   user,
-}: FormContactProps & { user: User }) {
+}: FormPostProps & { user: User }) {
   return (
-    <div className="bg-gray-700 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6">
-      <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={user.image as string}
-          alt={`Profile picture of ${user.name}`}
-          className="block w-full aspect-square rounded-full object-cover object-center h-full text-transparent'"
-          onError={(e) => (e.currentTarget.src = '/avatar.svg')}
-        />
+    <div
+      className={` border-gray-700/50 p-8 rounded-md flex flex-col sm:flex-row items-stretch sm:items-start gap-6 border-2 ${
+        type === 'create' ? 'bg-gray-700/30' : 'bg-gray-700'
+      } `}
+    >
+      <div className="relative aspect-square w-12 shrink-0 bg-gray-400 rounded-full ring-2 ring-sky-500 ">
+        <Link href={'/profile'}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={user.image as string}
+            alt={`Profile picture of ${user.name}`}
+            className="block w-full aspect-square rounded-full object-cover object-center h-full text-transparent'"
+            onError={(e) => (e.currentTarget.src = '/avatar.svg')}
+          />
+        </Link>
       </div>
 
       <div className="space-y-4 flex-grow">
-        <h3 className="text-lg font-medium">Create New Post</h3>
+        <h3 className="text-lg font-medium">
+          {type === 'create' ? 'Create New Post' : 'Edit Post'}
+        </h3>
         <form
           className="space-y-3"
           autoComplete="off"
@@ -60,7 +69,7 @@ function PostForm({
             <input
               type="text"
               id="title"
-              className={`border text-sm rounded-lg outline-none  block w-full pl-10 p-2.5  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 `}
+              className={`border text-sm rounded-lg outline-none  block w-full pl-10 p-2.5  bg-gray-700/30 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 `}
               placeholder="Title"
               {...register('title', { required: true })}
             />
@@ -81,7 +90,7 @@ function PostForm({
             </div>
             <textarea
               id="description"
-              className=" resize-none border  text-sm rounded-lg outline-none block w-full pl-10 p-2.5  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+              className=" resize-none border  text-sm rounded-lg outline-none block w-full pl-10 p-2.5  bg-gray-700/30 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
               placeholder="Tell us what you feel.."
               rows={6}
               {...register('description', { required: true })}

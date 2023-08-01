@@ -3,18 +3,20 @@ import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { User, getServerSession } from 'next-auth';
 import { Archivo } from 'next/font/google';
 import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { authOptions } from '../api/auth/[...nextauth]';
-import PostForm from '@/components/PostForm';
+import { prisma } from '@/libs/db';
+import { PostStringDates } from '.';
+import DetailPostCard from '@/components/DetailPostCard';
+import { useState } from 'react';
+import Modal from '@/components/Modal';
+import CommentForm from '@/components/CommentForm';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import axios from 'axios';
-import router from 'next/router';
-import { useState } from 'react';
+import CommentCard from '@/components/CommentCard';
+import { Comment } from '@prisma/client';
 import Toast from '@/components/Toast';
-import { prisma } from '@/libs/db';
-import { Comment, Post } from '@prisma/client';
-import { makeInitial } from '@/libs/makeInitial';
-import { getDate } from '@/libs/getDate';
-import Link from 'next/link';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -22,27 +24,6 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
   const session = await getServerSession(context.req, context.res, authOptions);
-  const posts = await prisma.post.findMany({
-    include: {
-      user: true,
-      comments: {
-        select: {
-          id: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
-  const serializedPosts = posts.map((post) => {
-    return {
-      ...post,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.createdAt.toISOString(),
-    };
-  });
-
   if (!session) {
     return {
       redirect: {
@@ -52,47 +33,87 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
 
+  const post = await prisma.post.findFirst({
+    where: {
+      id: context.params?.id as string,
+    },
+    include: {
+      user: true,
+      comments: {
+        include: {
+          user: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  if (!post) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const serializedPost = {
+    ...post,
+    createdAt: post.createdAt.toISOString(),
+    updatedAt: post.createdAt.toISOString(),
+  };
+
+  const serializedComment = serializedPost.comments.map((comment) => {
+    return {
+      ...comment,
+      createdAt: comment.createdAt.toISOString(),
+      updatedAt: comment.createdAt.toISOString(),
+    };
+  });
+
   return {
     props: {
       user: session.user,
-      posts: serializedPosts,
+      post: { ...serializedPost, comments: serializedComment },
     },
   };
 };
 
-export interface IFormInput {
-  title: string;
-  description: string;
-}
-
-export type PostStringDates = Omit<Post, 'createdAt' | 'updatedAt'> & {
+export type SerializedComment = Omit<Comment, 'createdAt' | 'updatedAt'> & {
   createdAt: string;
   updatedAt: string;
-} & { comments: Comment[]; user: User };
+} & { user: User };
 
-export default function Posts({
+export default function DetailPost({
   user,
-  posts,
+  post,
 }: {
   user: User;
-  posts: PostStringDates[];
+  post: PostStringDates;
 }) {
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
   const [showError, setShowError] = useState(false);
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<IFormInput>();
+  } = useForm<{ text: string }>();
 
-  const onSubmit: SubmitHandler<IFormInput> = async (formData) => {
+  const paramId = router.asPath.split('/')[router.asPath.split('/').length - 1];
+
+  const onSubmit: SubmitHandler<{ text: string }> = async (formData) => {
     setShowError(false);
     try {
       await axios.post(
-        '/api/posts',
+        '/api/comments',
         {
           ...formData,
           userId: user.id,
+          postId: paramId,
         },
         {
           headers: {
@@ -100,18 +121,30 @@ export default function Posts({
           },
         },
       );
-      router.replace('/posts');
-      reset({ title: '', description: '' });
+      router.replace(`/posts/${paramId}`);
+      reset({ text: '' });
     } catch (error: any) {
       console.log(error);
       setShowError(true);
     }
   };
 
+  async function onDelete() {
+    setShowError(false);
+    try {
+      await axios.delete(`/api/posts/${paramId}`);
+      router.replace(`/posts`);
+      reset({ text: '' });
+    } catch (error: any) {
+      console.log(error);
+      setShowError(true);
+    }
+  }
+
   return (
     <>
       <Head>
-        <title>Posts | Mentalk</title>
+        <title>Detail Post | Mentalk</title>
       </Head>
       <PageLayout>
         <main className={`${archivo.className} px-8 py-10`}>
@@ -121,7 +154,7 @@ export default function Posts({
                 <li className="inline-flex items-center">
                   <Link
                     href="/"
-                    className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+                    className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-white"
                   >
                     <svg
                       className="w-3 h-3 mr-2.5"
@@ -132,7 +165,7 @@ export default function Posts({
                     >
                       <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
                     </svg>
-                    Home
+                    <span className="hidden sm:block">Home</span>
                   </Link>
                 </li>
                 <li>
@@ -154,18 +187,44 @@ export default function Posts({
                     </svg>
                     <Link
                       href="/posts"
-                      className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"
+                      className="ml-1 text-sm font-medium md:ml-2 text-gray-400 hover:text-white"
                     >
                       Posts
                     </Link>
+                  </div>
+                </li>
+                <li aria-current="page">
+                  <div className="flex items-center">
+                    <svg
+                      className="w-3 h-3 text-gray-400 mx-1"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 6 10"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="m1 9 4-4-4-4"
+                      />
+                    </svg>
+                    <span className="ml-1 text-sm font-medium md:ml-2 text-gray-400">
+                      {
+                        router.asPath.split('/')[
+                          router.asPath.split('/').length - 1
+                        ]
+                      }
+                    </span>
                   </div>
                 </li>
               </ol>
             </nav>
             <div className="col-span-full md:col-span-3 sm:grid sm:grid-cols-2 md:block gap-4 md:space-y-4">
               <div className="bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-md p-6 pt-24">
-                <h1 className="font-semibold text-2xl">All Posts</h1>
-                <p>{`Let's`} help each other</p>
+                <h1 className="font-semibold text-2xl">Detail Post</h1>
+                <p>They need help. Give them.</p>
               </div>
               <div className="bg-slate-200 rounded-md px-6 py-14 hidden sm:block text-gray-900 text-center space-y-1">
                 <p className="font-semibold text-lg lg:text-2xl">
@@ -191,76 +250,41 @@ export default function Posts({
             </div>
 
             <div className="col-span-full md:col-span-7 space-y-6">
-              <PostForm
+              <DetailPostCard
+                post={post}
                 user={user}
-                errors={errors}
-                handleSubmit={handleSubmit}
-                isSubmitting={isSubmitting}
-                register={register}
-                type="create"
-                onSubmit={onSubmit}
+                setShowModal={setShowModal}
+                onDelete={onDelete}
               />
 
               {showError && (
                 <Toast>Failed to create the post. Please try again.</Toast>
               )}
 
-              <div className="h-[1px] w-full bg-slate-200/10"></div>
+              {/* <div className="h-[1px] w-full bg-slate-200/10"></div> */}
+
+              <CommentForm
+                errors={errors}
+                handleSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
+                register={register}
+                onSubmit={onSubmit}
+              />
 
               <div className="space-y-3">
-                {posts.map((post) => (
-                  <Link
-                    href={`/posts/${post.id}`}
-                    key={post.id}
-                    className="block bg-gray-700 rounded-md p-6 space-y-3 hover:ring-2 ring-transparent hover:ring-sky-600 transition-all"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full flex justify-center items-center bg-gray-400 p-2 aspect-square min-h-[3rem] ">
-                          <span className="text-[90%]">
-                            {makeInitial(post.user.name as string)}
-                          </span>
-                        </div>
-
-                        <div>
-                          <p className="font-semibold text-xl">
-                            {makeInitial(post.user.name as string)}
-                          </p>
-                          <p className="text-gray-400 text-xs">
-                            {getDate(post.createdAt)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <p>{post.comments.length}</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-6 h-6"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="font-medium text-lg">{post.title}</h3>
-                      <p className="line-clamp-4 text-gray-400">
-                        {post.description}
-                      </p>
-                    </div>
-                  </Link>
+                <h3 className="text-xl font-bold">
+                  Comments - {post.comments.length}
+                </h3>
+                {post.comments.map((comment) => (
+                  <CommentCard key={comment.id} comment={comment} />
                 ))}
               </div>
             </div>
           </section>
         </main>
+        {showModal && (
+          <Modal setShowModal={setShowModal} user={user} post={post} />
+        )}
       </PageLayout>
     </>
   );

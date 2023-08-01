@@ -49,6 +49,9 @@ export default function Login() {
                   Email with that account has been linked. Try another
                 </Toast>
               )}
+              {router.query.error === 'OAuthCallback' && (
+                <Toast>Something wrong when signing in</Toast>
+              )}
               <div className="p-6 space-y-4 mt-8 md:space-y-6 sm:p-8 border border-slate-200/10 rounded-lg">
                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                   Sign in to your account
@@ -100,7 +103,9 @@ export default function Login() {
                     Sign in with Google
                   </button>
                   <button
-                    onClick={() => signIn('github', { callbackUrl: '/' })}
+                    onClick={() =>
+                      signIn('github', { callbackUrl: '/profile' })
+                    }
                     type="button"
                     disabled
                     className="text-white disabled:cursor-not-allowed bg-gray-700 hover:bg-gray-700/90 hover:ring-2 hover:outline-none hover:ring-gray-400/30 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center w-full justify-center mr-2 mb-2"
@@ -135,7 +140,9 @@ export default function Login() {
                     Sign in with Facebook
                   </button>
                   <button
-                    onClick={() => signIn('github', { callbackUrl: '/' })}
+                    onClick={() =>
+                      signIn('github', { callbackUrl: '/profile' })
+                    }
                     type="button"
                     className="text-white bg-gray-700 hover:bg-gray-700/90 hover:ring-2 hover:outline-none hover:ring-gray-400/30 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center w-full justify-center mr-2 mb-2"
                   >
