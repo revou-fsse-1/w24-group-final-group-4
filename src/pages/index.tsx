@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import { Archivo } from 'next/font/google';
 import PageLayout from '@/components/PageLayout';
+import Link from 'next/link';
 
-const inter = Archivo({ subsets: ['latin'] });
+const archivo = Archivo({ subsets: ['latin'] });
 
 const images = ['https://i.imgur.com/N1gYpys.jpeg'];
 
@@ -10,7 +11,7 @@ export default function Home() {
   return (
     <PageLayout>
       <main
-        className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+        className={`flex min-h-screen flex-col items-center justify-between p-24 ${archivo.className}`}
       >
         <div className="px-6 w-full">
           <div className="flex items-center justify-between p-16 bg-slate-700 rounded-[20px]">
@@ -21,7 +22,6 @@ export default function Home() {
                   fontSize: '56px',
                   lineHeight: '64px',
                   letterSpacing: '0.45px',
-                  // position: 'relative',
                 }}
               >
                 Take care of your
@@ -30,9 +30,11 @@ export default function Home() {
                 <br />
                 our great community
               </p>
-              <button className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg">
-                Get Started
-              </button>
+              <Link href="/login">
+                <button className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-700 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg">
+                  Get Started
+                </button>
+              </Link>
               <div className="flex py-6 gap-10">
                 <div className="flex gap-3">
                   <svg
