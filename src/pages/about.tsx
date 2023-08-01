@@ -32,7 +32,7 @@ export default function About() {
                   // position: 'relative',
                 }}
               >
-                We are a group of people who really care about the general masses'
+                We are a group of people who really care about the general {` masses' `}
                 mental health and decided to make a platform on which they could
                 ease their pain by sharing with others.
               </p>
