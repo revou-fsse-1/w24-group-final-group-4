@@ -61,7 +61,9 @@ export default function Login() {
 
                 <div className="space-y-4">
                   <button
-                    onClick={() => signIn('google', { callbackUrl: '/' })}
+                    onClick={() =>
+                      signIn('google', { callbackUrl: '/profile' })
+                    }
                     type="button"
                     className="text-white bg-gray-700 hover:bg-gray-700/90 hover:ring-2 hover:outline-none hover:ring-gray-400/30 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center w-full justify-center mr-2"
                   >
