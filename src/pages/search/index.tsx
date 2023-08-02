@@ -99,10 +99,10 @@ export default function Posts({
   return (
     <>
       <Head>
-        <title>Posts | Mentalk</title>
+        <title>Search | Mentalk</title>
       </Head>
       <PageLayout>
-        <main className={`${archivo.className} px-8 py-10`}>
+        <main className={`${archivo.className} px-8 py-10 min-h-screen`}>
           <section className="max-w-screen-lg mx-auto grid grid-cols-10 gap-4">
             <nav className="col-span-full" aria-label="Breadcrumb">
               <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -140,12 +140,9 @@ export default function Posts({
                         d="m1 9 4-4-4-4"
                       />
                     </svg>
-                    <Link
-                      href="/posts"
-                      className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"
-                    >
-                      Posts
-                    </Link>
+                    <span className="ml-1 text-sm font-medium  md:ml-2 text-gray-400 hover:text-white">
+                      Search
+                    </span>
                   </div>
                 </li>
               </ol>

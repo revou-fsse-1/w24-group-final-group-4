@@ -72,7 +72,7 @@ export default function Profile({
         <title>{`${user.name?.split(' ')[0]}'s Profile | Mentalk`}</title>
       </Head>
       <PageLayout>
-        <main className={`${archivo.className} px-8 py-10`}>
+        <main className={`${archivo.className} px-8 py-10 min-h-full`}>
           <section className="max-w-screen-lg mx-auto grid grid-cols-10 gap-4">
             <nav className="col-span-full" aria-label="Breadcrumb">
               <ol className="inline-flex items-center space-x-1 md:space-x-3">
