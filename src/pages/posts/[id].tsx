@@ -253,7 +253,7 @@ export default function DetailPost({
                     />
                   </svg>
 
-                  <p className="text-sm lg:text-base">Call 0821-2300-2323</p>
+                  <p className="text-sm lg:text-base">Call 119</p>
                 </div>
               </div>
             </div>
