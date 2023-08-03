@@ -1,7 +1,6 @@
 import { getDate } from '@/libs/getDate';
-import { makeInitial } from '@/libs/makeInitial';
-import { SerializedComment } from '@/pages/posts/[id]';
-import { Comment, User } from '@prisma/client';
+import { createAvatar } from '@dicebear/core';
+import { thumbs } from '@dicebear/collection';
 
 export default function CommentCard({ comment }: { comment: any }) {
   return (
@@ -13,19 +12,30 @@ export default function CommentCard({ comment }: { comment: any }) {
       <div>
         <div className="flex justify-between items-center">
           <div className="flex items-start gap-3">
-            <div className="rounded-full flex justify-center items-center bg-gray-400 p-2 aspect-square min-h-[3rem] ">
-              <span className="text-[90%]">
-                {makeInitial(comment.user.name as string)}
-              </span>
+            <div className="rounded-full aspect-square flex justify-center items bg-gray-400 overflow-hidden shrink-0 min-w-[3rem] ">
+              {/*  eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="w-full h-full rounded-full"
+                src={createAvatar(thumbs, {
+                  seed: comment.user.name as string,
+                }).toDataUriSync()}
+                alt="avatar"
+              />
             </div>
 
             <div>
               <div className="flex items-center gap-2">
                 <p className="font-semibold text-xl">
-                  {makeInitial(comment.user.name as string)}
+                  {/* {makeInitial(comment.user.name as string)} */}
+                  {comment.user.name}
                 </p>
                 <p className="text-gray-400 text-xs">
-                  {getDate(comment.createdAt)}
+                  {getDate(comment.createdAt)}{' '}
+                  {new Date(comment.createdAt).toLocaleTimeString('en', {
+                    timeStyle: 'short',
+                    hour12: false,
+                    timeZone: 'Asia/Jakarta',
+                  })}
                 </p>
               </div>
               <div className="space-y-2">

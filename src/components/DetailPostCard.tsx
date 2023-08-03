@@ -1,5 +1,4 @@
 import { getDate } from '@/libs/getDate';
-import { makeInitial } from '@/libs/makeInitial';
 import { PostStringDates } from '@/pages/posts';
 import { User } from 'next-auth';
 import React, { useState } from 'react';
@@ -29,9 +28,6 @@ function DetailPostCard({
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="rounded-full flex justify-center items-center bg-gray-400 p-2 aspect-square min-h-[3rem] overflow-hidden ">
-              {/* <span className="text-[90%]">
-                {makeInitial(post.user.name as string)}
-              </span> */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className="w-full h-full scale-150"
@@ -43,11 +39,15 @@ function DetailPostCard({
             </div>
 
             <div>
-              <p className="font-semibold text-xl">
-                {/* {makeInitial(post.user.name as string)} */}
-                {post.user.name}
+              <p className="font-semibold text-xl">{post.user.name}</p>
+              <p className="text-gray-400 text-xs">
+                {getDate(post.createdAt)}{' '}
+                {new Date(post.createdAt).toLocaleTimeString('en', {
+                  timeStyle: 'short',
+                  hour12: false,
+                  timeZone: 'Asia/Jakarta',
+                })}
               </p>
-              <p className="text-gray-400 text-xs">{getDate(post.createdAt)}</p>
             </div>
           </div>
 
