@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { authOptions } from '../api/auth/[...nextauth]';
 import { prisma } from '@/libs/db';
-import { PostStringDates } from '.';
+import { PostStringDates, customConfig } from '.';
 import DetailPostCard from '@/components/DetailPostCard';
 import { useState } from 'react';
 import Modal from '@/components/Modal';
@@ -17,6 +17,7 @@ import axios from 'axios';
 import CommentCard from '@/components/CommentCard';
 import { Comment } from '@prisma/client';
 import Toast from '@/components/Toast';
+import { uniqueNamesGenerator } from 'unique-names-generator';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -61,6 +62,10 @@ export const getServerSideProps: GetServerSideProps = async (
 
   const serializedPost = {
     ...post,
+    user: {
+      ...post.user,
+      name: uniqueNamesGenerator(customConfig),
+    },
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.createdAt.toISOString(),
   };
@@ -68,6 +73,10 @@ export const getServerSideProps: GetServerSideProps = async (
   const serializedComment = serializedPost.comments.map((comment) => {
     return {
       ...comment,
+      user: {
+        ...comment.user,
+        name: uniqueNamesGenerator(customConfig),
+      },
       createdAt: comment.createdAt.toISOString(),
       updatedAt: comment.createdAt.toISOString(),
     };
@@ -224,7 +233,7 @@ export default function DetailPost({
             <div className="col-span-full md:col-span-3 sm:grid sm:grid-cols-2 md:block gap-4 md:space-y-4">
               <div className="bg-gradient-to-tr from-cyan-500 to-blue-500 rounded-md p-6 pt-24">
                 <h1 className="font-semibold text-2xl">Detail Post</h1>
-                <p>They need help. Give them.</p>
+                <p>Let{"'s"} help each other.</p>
               </div>
               <div className="bg-slate-200 rounded-md px-6 py-14 hidden sm:block text-gray-900 text-center space-y-1">
                 <p className="font-semibold text-lg lg:text-2xl">
