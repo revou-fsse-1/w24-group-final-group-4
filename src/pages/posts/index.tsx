@@ -235,12 +235,17 @@ export default function Posts({
                         </div>
 
                         <div>
-                          <p className="font-semibold text-xl">
+                          <p className="font-medium text-xl">
                             {/* {makeInitial(post.user.name as string)} */}
                             {post.user.name}
                           </p>
                           <p className="text-gray-400 text-xs">
-                            {getDate(post.createdAt)}
+                            {getDate(post.createdAt)}{' '}
+                            {new Date(post.createdAt).toLocaleTimeString('en', {
+                              timeStyle: 'short',
+                              hour12: false,
+                              timeZone: 'Asia/Jakarta',
+                            })}
                           </p>
                         </div>
                       </div>
