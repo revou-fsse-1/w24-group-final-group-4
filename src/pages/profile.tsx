@@ -5,13 +5,12 @@ import { Archivo } from 'next/font/google';
 import Head from 'next/head';
 import { authOptions } from './api/auth/[...nextauth]';
 import { prisma } from '@/libs/db';
-import { getDate } from '@/libs/getDate';
 import Link from 'next/link';
 import { PostStringDates, customConfig } from './posts';
 import { uniqueNamesGenerator } from 'unique-names-generator';
-import { createAvatar } from '@dicebear/core';
-import { thumbs } from '@dicebear/collection';
 import PostCard from '@/components/PostCard';
+import { useState } from 'react';
+import CreateModal from '@/components/CreateModal';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -74,6 +73,8 @@ export default function Profile({
   user: User;
   posts: PostStringDates[];
 }) {
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <>
       <Head>
@@ -164,11 +165,19 @@ export default function Profile({
             </div>
 
             <div className="col-span-full md:col-span-7 space-y-6">
-              <span className="text-xl font-bold leading-none">
-                {posts.length} Post{posts.length > 1 ? 's' : ''}
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-xl font-bold leading-none">
+                  {posts.length} Post{posts.length > 1 ? 's' : ''}
+                </span>
+                <button
+                  className="py-2 px-4 bg-sky-500 rounded-md hover:bg-sky-600 font-medium"
+                  onClick={() => setShowModal(true)}
+                >
+                  Create Post
+                </button>
+              </div>
 
-              <div className="h-[1px] w-full bg-slate-200/10"></div>
+              <div className="h-[2px] w-full bg-slate-200/10"></div>
 
               <div className="space-y-3">
                 {posts.map((post) => (
@@ -178,6 +187,7 @@ export default function Profile({
             </div>
           </section>
         </main>
+        {showModal && <CreateModal setShowModal={setShowModal} user={user} />}
       </PageLayout>
     </>
   );

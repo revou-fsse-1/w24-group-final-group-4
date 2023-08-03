@@ -59,7 +59,7 @@ export default function CommentForm({
             />
           </svg>
         ) : (
-          'Publish'
+          'Send'
         )}
       </button>
     </form>
