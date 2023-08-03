@@ -15,8 +15,15 @@ import { Comment, Post } from '@prisma/client';
 import { makeInitial } from '@/libs/makeInitial';
 import { getDate } from '@/libs/getDate';
 import Link from 'next/link';
+import { Config, names, uniqueNamesGenerator } from 'unique-names-generator';
 
 const archivo = Archivo({ subsets: ['latin'] });
+
+const customConfig: Config = {
+  dictionaries: [names, names],
+  separator: ' ',
+  style: 'capital',
+};
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext,
@@ -35,9 +42,14 @@ export const getServerSideProps: GetServerSideProps = async (
       createdAt: 'desc',
     },
   });
+
   const serializedPosts = posts.map((post) => {
     return {
       ...post,
+      user: {
+        ...post.user,
+        name: uniqueNamesGenerator(customConfig),
+      },
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.createdAt.toISOString(),
     };
@@ -224,7 +236,8 @@ export default function Posts({
 
                         <div>
                           <p className="font-semibold text-xl">
-                            {makeInitial(post.user.name as string)}
+                            {/* {makeInitial(post.user.name as string)} */}
+                            {post.user.name}
                           </p>
                           <p className="text-gray-400 text-xs">
                             {getDate(post.createdAt)}
