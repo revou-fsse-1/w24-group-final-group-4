@@ -13,15 +13,21 @@ import Toast from '@/components/Toast';
 import { prisma } from '@/libs/db';
 import { Comment, Post } from '@prisma/client';
 import Link from 'next/link';
-import { Config, names, uniqueNamesGenerator } from 'unique-names-generator';
+import {
+  Config,
+  animals,
+  colors,
+  names,
+  uniqueNamesGenerator,
+} from 'unique-names-generator';
 import PostCard from '@/components/PostCard';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
 export const customConfig: Config = {
-  dictionaries: [names, names],
-  separator: ' ',
-  style: 'capital',
+  dictionaries: [animals, colors],
+  separator: '-',
+  // style: 'capital',
 };
 
 export const getServerSideProps: GetServerSideProps = async (

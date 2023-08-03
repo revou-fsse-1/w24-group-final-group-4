@@ -165,7 +165,7 @@ export default function Profile({
 
             <div className="col-span-full md:col-span-7 space-y-6">
               <span className="text-xl font-bold leading-none">
-                Total Posts - {posts.length}
+                {posts.length} Post{posts.length > 1 ? 's' : ''}
               </span>
 
               <div className="h-[1px] w-full bg-slate-200/10"></div>
