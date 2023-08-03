@@ -7,7 +7,11 @@ import { authOptions } from './api/auth/[...nextauth]';
 import { prisma } from '@/libs/db';
 import { getDate } from '@/libs/getDate';
 import Link from 'next/link';
-import { PostStringDates } from './posts';
+import { PostStringDates, customConfig } from './posts';
+import { uniqueNamesGenerator } from 'unique-names-generator';
+import { createAvatar } from '@dicebear/core';
+import { thumbs } from '@dicebear/collection';
+import PostCard from '@/components/PostCard';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -46,6 +50,10 @@ export const getServerSideProps: GetServerSideProps = async (
   const serializedPosts = userPosts.map((post) => {
     return {
       ...post,
+      user: {
+        ...post.user,
+        name: uniqueNamesGenerator(customConfig),
+      },
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.createdAt.toISOString(),
     };
@@ -164,55 +172,7 @@ export default function Profile({
 
               <div className="space-y-3">
                 {posts.map((post) => (
-                  <Link
-                    href={`/posts/${post.id}`}
-                    key={post.id}
-                    className="block bg-gray-700 rounded-md p-6 space-y-3 hover:ring-2 ring-transparent hover:ring-sky-600 transition-all"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-3">
-                        <div className="rounded-full flex justify-center items-center bg-gray-400 p-2 aspect-square min-h-[3rem]">
-                          <span className="text-[90%]">
-                            {post.user.name
-                              ? post.user.name.charAt(0).toUpperCase()
-                              : ''}
-                          </span>
-                        </div>
-
-                        <div>
-                          <p className="font-semibold text-xl">
-                            {post.user.name}
-                          </p>
-                          <p className="text-gray-400 text-xs">
-                            {getDate(post.createdAt)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <p>{post.comments.length}</p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-6 h-6"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="font-medium text-lg">{post.title}</h3>
-                      <p className="line-clamp-4 text-gray-400">
-                        {post.description}
-                      </p>
-                    </div>
-                  </Link>
+                  <PostCard post={post} key={post.id} />
                 ))}
               </div>
             </div>
