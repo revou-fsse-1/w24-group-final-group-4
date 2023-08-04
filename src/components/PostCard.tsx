@@ -16,7 +16,7 @@ export default function PostCard({ post }: { post: PostStringDates }) {
           <div className="rounded-full flex justify-center items-center bg-gray-400 aspect-square min-h-[3rem] overflow-hidden">
             {/*  eslint-disable-next-line @next/next/no-img-element */}
             <img
-              className="w-full h-full"
+              // className="w-full h-full"
               src={createAvatar(thumbs, {
                 seed: post.user.name as string,
               }).toDataUriSync()}
