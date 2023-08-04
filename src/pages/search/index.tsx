@@ -11,6 +11,9 @@ import SearchInput from '@/components/SearchInput';
 import PostCard from '@/components/PostCard';
 import { uniqueNamesGenerator } from 'unique-names-generator';
 import { customConfig } from '../posts';
+import { useState } from 'react';
+import CommentCard from '@/components/CommentCard';
+import CommentCardSearch from '@/components/CommentCardSearch';
 
 const archivo = Archivo({ subsets: ['latin'] });
 
@@ -48,6 +51,21 @@ export const getServerSideProps: GetServerSideProps = async (
       createdAt: 'desc',
     },
   });
+  const comments = await prisma.comment.findMany({
+    where: {
+      OR: [
+        {
+          text: { contains: query, mode: 'insensitive' },
+        },
+      ],
+    },
+    include: {
+      user: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
   const serializedPosts = posts.map((post) => {
     return {
       ...post,
@@ -59,7 +77,17 @@ export const getServerSideProps: GetServerSideProps = async (
       updatedAt: post.createdAt.toISOString(),
     };
   });
-
+  const serializedComments = comments.map((comment) => {
+    return {
+      ...comment,
+      user: {
+        ...comment.user,
+        name: uniqueNamesGenerator(customConfig),
+      },
+      createdAt: comment.createdAt.toISOString(),
+      updatedAt: comment.createdAt.toISOString(),
+    };
+  });
   if (!session) {
     return {
       redirect: {
@@ -73,6 +101,7 @@ export const getServerSideProps: GetServerSideProps = async (
     props: {
       user: session.user,
       posts: serializedPosts,
+      comments: serializedComments,
     },
   };
 };
@@ -90,10 +119,31 @@ export type PostStringDates = Omit<Post, 'createdAt' | 'updatedAt'> & {
 export default function Posts({
   user,
   posts,
+  comments,
 }: {
   user: User;
   posts: PostStringDates[];
+  comments: Comment[];
 }) {
+  const [showPosts, setShowPosts] = useState(true);
+  const [showComments, setShowComments] = useState(false);
+
+  const handleShowPosts = () => {
+    if (!showPosts) {
+      setShowPosts(true);
+    }
+    if (showComments) {
+      setShowComments(false);
+    }
+  };
+  const handleShowComments = () => {
+    if (!showComments) {
+      setShowComments(true);
+    }
+    if (showPosts) {
+      setShowPosts(false);
+    }
+  };
   return (
     <>
       <Head>
@@ -176,16 +226,56 @@ export default function Posts({
             <div className="col-span-full md:col-span-7 space-y-6">
               <SearchInput></SearchInput>
               <div className="h-[1px] w-full bg-slate-200/10"></div>
-
-              {posts.length === 0 ? (
-                <div className="flex justify-center py-24 bg-gray-900/20 rounded-lg mt-10">
-                  <p>No posts available</p>
+              <div className="flex gap-8">
+                <button
+                  onClick={handleShowPosts}
+                  className={`flex-col flex md:flex-row items-center gap-1 md:gap-2 py-1 px-3 rounded-md hover:text-sky-400 text-base md:text-lg ${
+                    showPosts && 'bg-sky-600/20'
+                  }
+  `}
+                >
+                  Posts
+                </button>
+                <button
+                  onClick={handleShowComments}
+                  className={`flex-col flex md:flex-row items-center gap-1 md:gap-2 py-1 px-3 rounded-md hover:text-sky-400 text-base md:text-lg ${
+                    showComments && 'bg-sky-600/20'
+                  }`}
+                >
+                  Comments
+                </button>
+              </div>
+              {showPosts && (
+                <div>
+                  {posts.length === 0 ? (
+                    <div className="flex justify-center py-24 bg-gray-900/20 rounded-lg mt-10">
+                      <p>No posts available</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {posts.map((post) => (
+                        <PostCard post={post} key={post.id} />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {posts.map((post) => (
-                    <PostCard post={post} key={post.id} />
-                  ))}
+              )}
+              {showComments && (
+                <div>
+                  {comments == null ? (
+                    <div className="flex justify-center py-24 bg-gray-900/20 rounded-lg mt-10">
+                      <p>No comments available</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {comments.map((comment) => (
+                        <CommentCardSearch
+                          comment={comment}
+                          key={comment.id}
+                        ></CommentCardSearch>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
