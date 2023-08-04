@@ -6,6 +6,10 @@
 
 “We are a group of people who really care about the general masses’ mental health and decided to make a platform on which they could ease their pain by sharing with others.”
 
+## Data Model
+
+![MentalkBanner](./public/datamodel.png)
+
 ## Links
 
 - Website: [Mentalk](http://mentalk.id/)
@@ -16,12 +20,12 @@
 
 ---
 
-| Name                 | Role |
-| -------------------- | ---- |
-| Aldiansyah Dwi Putra |      |
-| Anggih Pratama       |      |
-| Rio Yulinanda K      |      |
-| Winona Ivana         |      |
+| Name                 | Role               |
+| -------------------- | ------------------ |
+| Aldiansyah Dwi Putra | Lead Engineer      |
+| Anggih Pratama       | Front-end Engineer |
+| Rio Yulinanda K      | Front-end Engineer |
+| Winona Ivana         | Back-end Engineer  |
 
 ## Technologies
 
