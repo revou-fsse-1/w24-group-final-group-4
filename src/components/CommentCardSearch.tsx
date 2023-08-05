@@ -16,7 +16,7 @@ export default function CommentCardSearch({ comment }: { comment: any }) {
             <div className="rounded-full aspect-square flex justify-center items bg-gray-400 overflow-hidden shrink-0 min-w-[3rem] ">
               {/*  eslint-disable-next-line @next/next/no-img-element */}
               <img
-                className="w-full h-full rounded-full"
+                // className="w-full h-full rounded-full"
                 src={createAvatar(thumbs, {
                   seed: comment.user.name as string,
                 }).toDataUriSync()}
